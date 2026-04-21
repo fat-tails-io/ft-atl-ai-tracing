@@ -1,0 +1,114 @@
+[
+  {
+    "objectID": "embedded-ai-traceability.html#context-is-key",
+    "href": "embedded-ai-traceability.html#context-is-key",
+    "title": "AI Traceability",
+    "section": "Context is Key 😀",
+    "text": "Context is Key 😀\n\n\n\n\n\n\n\nAI Traceability in Atlassian’s Eco-System @ 22nd April 2026\n\n\n\n“Rovo” is the “umbrella” term for all of Atlassian’s AI (user) features, including:\n\nRovo Chat\nStudio (for Rovo)\nRovo Chrome extension\nRovo Dev (Chat)\nRovo Dev (CLI)\nRovo Dev (for Jira)\nnewly, Remix w/ Rovo AND…\n\nlikely more to come!\n\nNew genAI tool combinations often increase LLM usage, through new model introduction and further token consumption.\n\n\n\n\n\n\n\n\nContext is Key, as the “press” constantly reminds us just now…\nSome terminology may be less obvious to infrequent Atlassian users, so a brief explanation of the state-of-play today…\nI’ve dated the statement for reasons I’ll mention in the upcoming disclaimer…"
+  },
+  {
+    "objectID": "embedded-ai-traceability.html#thank-you",
+    "href": "embedded-ai-traceability.html#thank-you",
+    "title": "AI Traceability",
+    "section": "Thank You…",
+    "text": "Thank You…\n\nAtlasssian Community, London, (Stuart, Jay, Bruce, Abi)\nJesus F. and Lloyds for sharing their migration journey\n\n\n\n\nACE, London: I hope I have your names correctly listed by length of service to ACE London\nJesus Fernandez: Thank you, TOUGH act to follow.\n\nKnowing more about the REAL decisions you’re facing, and\nStaring into the bank’s crystal ball for enduring funding decisions… MUCH APPRECIATED\n\nNo sooner do companies finish an epic migration to cloud (pun intended) do you turn to decisions about AI AND\n\nWhich ones to switch on…?"
+  },
+  {
+    "objectID": "embedded-ai-traceability.html#slide4-id",
+    "href": "embedded-ai-traceability.html#slide4-id",
+    "title": "AI Traceability",
+    "section": "",
+    "text": "Disclaimer @ 22nd April 2026\n\n\nViews and opinions expressed in this presentation are solely my own and do not necessarily reflect the official positions, strategies, or views of any organisation I represent. While every effort has been made to ensure that principles presented here are well-considered to move forward constructively with embedded A.I., they may be superseded or invalidated by features, changes, or developments introduced in future Atlassian releases.\n\n\n\n\n\n\n\nAI is a HUGE topic and embedded AI is just one aspect of it. I’ve certainly been “conflicted” about what to cover this evening\nWhat you’ll see shouldn’t be considered “best practice” or a “how-to” guide, it is hoped it’ll motivate your thinking on what’s currently possible for scaled AI (with Rovo)\n\nAND what might need to come, to satisfy auditability / intervention\n\nI’ve tried to cram a bunch of things in, so if something is unclear as we go, put your hand up, I’ll do my best to clarify / answer your questions…\nMy details are at the end so we can get to the interesting stuff straightaway…"
+  },
+  {
+    "objectID": "embedded-ai-traceability.html#slide6-id",
+    "href": "embedded-ai-traceability.html#slide6-id",
+    "title": "AI Traceability",
+    "section": "",
+    "text": "Jira Data Center: Sprint Report\n\n\n\n\nPLEASE SHOUTOUT IF TOO SMALL\nHands-up if you recognise this as Jira?\n\nKeep your hands-up if you think you recognise which flavour of Jira this is?\n\nAnyone willing to shout out which one?\n\n\nSprint Report, Jira Data Center"
+  },
+  {
+    "objectID": "embedded-ai-traceability.html#slide7-id",
+    "href": "embedded-ai-traceability.html#slide7-id",
+    "title": "AI Traceability",
+    "section": "",
+    "text": "Jira Cloud: Spaces (Project) Board\n\n\n\n\nAgain, PLEASE SHOUTOUT IF TOO SMALL\nAgain, hands-up if you recognise this as Jira?\nKeep your hands-up if you think you recognise which flavour of Jira this is?\nAnyone willing to shout out which one?\nProject Board, Jira Cloud"
+  },
+  {
+    "objectID": "embedded-ai-traceability.html#slide8-id",
+    "href": "embedded-ai-traceability.html#slide8-id",
+    "title": "AI Traceability",
+    "section": "",
+    "text": "git commit -m ‘FT-12 #time 4h 30m #comment UI Updated.’\n\n\n\nhashtags might give it away…\n\n#time…,\n#comment…\n\n\n\n\n\nJira Smart Commits: (Extended) Git CLI\n\n\n\n\n\nHands-up if you recognise this as Jira?\n\nKeep your hands-up if you think you recognise which flavour of Jira this is?\n\nAnyone willing to shout out which one it is?\n\n\nJira Smart Commits: (Extended) Git CLI\n\nI remember doing this integration for a large telco (back in the day) thinking it was THE UNLOCK to productivity and transparency…\nI was SOOO enthusiastic about it\n\nProbably had some PowerPoint slides about it…\n\nI think if you have a role in “DevRel”, “hats-off” to you…\n\nit’s sometimes hard to know what engineers / developers may care about"
+  },
+  {
+    "objectID": "embedded-ai-traceability.html#slide10-id",
+    "href": "embedded-ai-traceability.html#slide10-id",
+    "title": "AI Traceability",
+    "section": "",
+    "text": "BUT, DO YOU Know Jira’s Face like this…?\n\n\n\n\n\n\n\nModern, integrated Atlassian at YOUR point of interaction.\n\n\n\n\n\nBUSY… Huh!\n\nThis is my IDE (VS Code here today, but I’ve had success with the setup in Cursor also)\n\nMy agent Co-Pilot on the right side-bar (GitHub’s Copilot, no proxy)\n\n\nMiddle-Top the editor panel has a Jira ticket\n\nAtlassian extension installed from the marketplace\n\nthe (*.vsix) extension might require internal approval\nI’ve configured it with a custom (JQL) filter to show me the work items I’m interested in, from the FT project (Jira space)\n\n\nTop-left, I’ve got a code repository (SVN connected, this one is Git, could be BitBucket)\nMiddle-left, I’ve a collapsed panel with the (branch) source-control history\nBottom-left, most relevant this evening, I’ve configured the new Rovo Dev extension\n\nFor tonight’s presentation I’ve worked with CHAT\nIt’s a bit more obvious what’s happening\n\nthe CLI is also available\n\n\nOn closer with the chat you can witness we’re BOTH getting a bit confused\n\nIM(H)O - companies already pay for “confusion / learning” of their employees\n\n(in delays, extensions, re-basing timelines, learning, mentoring etc.),\nPerhaps AI chat can clear-up confusion more quickly\n\n\nEagle-eyed amongst you SHOULD notice the open ticket (Top-Middle) and the Forge work taking place (Bottom-Middle) are for differnt Jira projects..\n\nWith a highly configurable IDE interface and Rovo Dev\n\nIT’s REALISTIC to be working MORE consistently, on multiple projects at once!\n\n\nBut CAN we get there SAFELY…?"
+  },
+  {
+    "objectID": "embedded-ai-traceability.html#weightless-work-with-rovo",
+    "href": "embedded-ai-traceability.html#weightless-work-with-rovo",
+    "title": "AI Traceability",
+    "section": "✨ Weightless Work with Rovo?",
+    "text": "✨ Weightless Work with Rovo?\n\n\nWe’re switching on the (embedded) AI\n\nLet’s avoid the strategic roadmap becoming our competitor’s backlog\n\nMitigate those unintended consequences…\n\n\n\n\n\n\n\n\nSwitching it on, you’re assuming responsibility (incl. Biases of integrated LLMs)\nWe’re at a moment when genAI has entered every C-Suite discussion, but still at the edge of REAL impact for most businesses\nAs a Programme Manager / Enterprise Architect, let’s throw-up a framework to give some context here, I find ACE is pretty strasightforward\n\nAlign - Establishing boundaries for Rovo\nControl - Controlling Rovo’s domain for action (Prompt Design, Tool Permissions, Available Skills)\nEvidence - Intervention States, Session Analytics, Drift Analysis"
+  },
+  {
+    "objectID": "embedded-ai-traceability.html#slide13-id",
+    "href": "embedded-ai-traceability.html#slide13-id",
+    "title": "AI Traceability",
+    "section": "",
+    "text": "Rovo Control & Insights (TOGAF View)\n\n\n\n\n\n\n\n\n\nControl\nEvidence\nIntervene\n\n\n\n\nAdmin\n✅ Rovo access\n✅ Rovo Insights\n❌\n\n\nAudit\n-\n✅ ALQL = ‘activity ~“Rovo”’\n-\n\n\nInsights\n-\n✅ Analytics\n❌\n\n\nStudio\n✅ Rovo Agent Permissions\n❌\n❌\n\n\nForge\n-\n✅ Developer Console\n✅ / ❌\n\n\nExtension (*.vsix)\n✅ Rovo Dev Settings\n✅ Logs\n✅ / ❌\n\n\n\n\n\nSo if we TOGAF out a “Rovo View”\n\nWhat is Rovo doing to support here?\n\nTable requires a little explanation.\n\nWith Rovo it turns out we can ALREADY DO, quite a lot\nTurns out, quite alot\nFrom the Admin console we can control Rovo’s access\nWe can see what Rovo’s been up to, with the Insights\nFrom Audit Logs and Insights"
+  },
+  {
+    "objectID": "embedded-ai-traceability.html#rovo-dev---tell-me-more",
+    "href": "embedded-ai-traceability.html#rovo-dev---tell-me-more",
+    "title": "AI Traceability",
+    "section": "Rovo (Dev) -> Tell Me MORE?",
+    "text": "Rovo (Dev) -&gt; Tell Me MORE?\n\n\nWhere THE WORK starts\n\nWhat are ALL those Rovos doing?\n\n\n\n\n\n\n\n\n\n\n\n\nRovo Dev (Sonnet 4.5) -&gt; Forge App, GraphQL API\n\n\n\n\n\n\n\nForge App -&gt; Missing Scope\n\n\n\n\n\n\nFigure 1: Rovo Analysis with a Forge App?\n\n\n\n\n\n\n❌ OK, another approach?\n\n\n\n\nRovo Dev has a ‘YOLO Mode’, it looks a bit MUCH for us just now\n\nEven so, with Rovo Dev (set to Sonnet 4.5)\nI’ve vibed-out a Forge app\n\nDesigned to dig deeper into all those Rovos\nAll seems to be going well, THEN… UH OH!"
+  },
+  {
+    "objectID": "embedded-ai-traceability.html#slide15-id",
+    "href": "embedded-ai-traceability.html#slide15-id",
+    "title": "AI Traceability",
+    "section": "",
+    "text": "AI Traceability -&gt; Forge App Architecture\n\n\n\n\nSo where next?\n\nEVEN more Rovo Dev features are available\n\nSessions, Logging etc.\n\nI have renewed “hope”…\n\nVibe-out more features for my Forge App\n\nCan I load some Rovo Dev session logs to prove a point? 1\n\n\n\n\n\nAt this point an overview of the Forge App solutions architecture is warranted…\n\nUser Interface (Atlassian’s UI Kit)\nForge Remote Backend (another Forge App) 2.1 Used to reach the GraphQL API\nLocal storage to Forge (KVS)\nGraphQL API (OAuth)\nResolvers link frontend and backend components together 5.1 In this example, “Sync Agents from GraphQL API” button in the app"
+  },
+  {
+    "objectID": "embedded-ai-traceability.html#rovo-dev---more-to-give",
+    "href": "embedded-ai-traceability.html#rovo-dev---more-to-give",
+    "title": "AI Traceability",
+    "section": "Rovo (Dev) -> More to Give?",
+    "text": "Rovo (Dev) -&gt; More to Give?\n\n\n\n\n\n\n\nRovo Dev -&gt; Limit Exceeded\n\n\n\n\nAfter 8.5 days of the month, I bust through the orgnisation’s token pool 2\n\nNO MORE for anyone else it seems\nBack to the budget-holder cap-in-hand?\n\nBUT is this MY fault?\n\nNO separate limits for development and testing, as yet…?\n\n\n\n\n\nIn a small business, where the budget holder is the product developer\n\nABSOLUTELY, this responsibility sits with one person\n\nIn a larger business, this would be devolved…\n\nand the unit cost efficiency of Rovo credits is the shared responsibility of Finance / IT mgt\nIn a sophisticated large enterprise, a specialist AI / ML / Model Risk function would give valuable input\n\nResource sharing is something to be learned, across teams, over time.\n\nSome similarities to resource pooling in Spark, or\npod resource management in Kubernetes"
+  },
+  {
+    "objectID": "embedded-ai-traceability.html#rovo-dev---sense-making",
+    "href": "embedded-ai-traceability.html#rovo-dev---sense-making",
+    "title": "AI Traceability",
+    "section": "Rovo (Dev) -> “Sense Making”",
+    "text": "Rovo (Dev) -&gt; “Sense Making”\n\n\nNo sub-agents this time, BUT\n+220 LLM calls, +200 tool calls later…\n\n\n\n\nRadial chart layouts can be intuitive for “getting-to-grips” with what’s going on in an agent session.\n\nIn our example it took several sessions to get the Forge App from earlier, BUT\nFor illustration purposes, I’ve added a single Rovo Dev session log here…\n\nIf you’ll let me explain\nD3’s radial tree, is a circular tree-layout plot…\n\nthe central point provides the user / agent perspective\nthe start of the chart (it’s first messages) appear just to the right of 12 o’clock\nsubsequent messages continue round in a clockwise manner\n\nEdges are coloured BLUE for a request (from me, or a tool), RED for a response\n\nNodes are coloured coded by type (system / user-prompt, text, tool-call etc.)\n\ncalls to the LLM (in this case Anthropic) are FURTHER identified with a GREY circle surrounding the node\n\n\nWe can explore what’s happened, by hovering over the edges and nodes of the chart"
+  },
+  {
+    "objectID": "embedded-ai-traceability.html#rovo---where-does-that-leave-us",
+    "href": "embedded-ai-traceability.html#rovo---where-does-that-leave-us",
+    "title": "AI Traceability",
+    "section": "Rovo -> Where Does That Leave US?",
+    "text": "Rovo -&gt; Where Does That Leave US?\n\nControl and guidance ✅ (Settings, AGENTS.md, MCP Configuration)\nReports and tracing ✅ (Insights, Session Logs) 3 BUT\nRuntime intervention ❌, needs change / customisation\n\nIn the meantime?\n\nDPA caution\n“Sandbox” my Rovo prompts before deployment?\n\nMonitor emergent behaviour in logs\n\nRe-cycle the sandbox for new prompts\n\nPeriodically deliver new “prompts” designed to guide agent behaviour…\n\n\n\n\n\nI’ve got control, I’ve got guidance\nI’ve got reports, I’ve got tracing\nBUT we’re not quite there with intervention…\n\nSO… be cautious with Atlassian’s current and evolving DPAs and\nCurrent impact for your business (an amount of extra-territorial processing)\n\n(SOME) of the capability is there, BUT the accountability is yours"
+  },
+  {
+    "objectID": "embedded-ai-traceability.html#rovo-dev---near-future",
+    "href": "embedded-ai-traceability.html#rovo-dev---near-future",
+    "title": "AI Traceability",
+    "section": "🔮 Rovo (Dev) -> Near Future…?",
+    "text": "🔮 Rovo (Dev) -&gt; Near Future…?\n\n\nLeading agent engineering platforms provide a hint?\n\n\n\nacli rovodev run /hooks\n\nacli rovodev run /hooks before_agent\nacli rovodev run /hooks after_agent\nacli rovodev run /hooks before_model\nacli rovodev run /hooks after_model\n\nacli rovodev run /hooks wrap_model_call\nacli rovodev run /hooks wrap_tool_call\n\n\n🤷🏻‍♂️ 🤷🏻‍♂️ 🤷🏻‍♂️ 🤷🏻‍♂️ 🤷🏻‍♂️ ?\n\n\n\nLook to leading AI tools for guidance?\nMaybe some hooks for Rovo, to enable “intervention” approaches"
+  },
+  {
+    "objectID": "embedded-ai-traceability.html#footnotes",
+    "href": "embedded-ai-traceability.html#footnotes",
+    "title": "AI Traceability",
+    "section": "Footnotes",
+    "text": "Footnotes\n\n\nSolution shown is sub-optimal at-scale, consider a dedicated SRE tool.\nSome AI solutions make token consumption a 1st class citizen.\nCDAC-99756: rovo:atlassian-external"
+  }
+]

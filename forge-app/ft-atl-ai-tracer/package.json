@@ -1,0 +1,32 @@
+{
+  "name": "jira-project-page-ui-kit",
+  "version": "1.1.36",
+  "main": "index.js",
+  "license": "MIT",
+  "private": true,
+  "scripts": {
+    "lint": "eslint src/**/*"
+  },
+  "devDependencies": {
+    "@types/node": "^25.5.0",
+    "@types/react": "^19.2.14",
+    "eslint": "^8.56.0",
+    "eslint-plugin-react-hooks": "^4.6.0",
+    "typescript": "^5.9.3"
+  },
+  "dependencies": {
+    "@evilmartians/agent-prism-data": "^0.0.9",
+    "@evilmartians/agent-prism-types": "^0.0.9",
+    "@forge/api": "^7.1.1",
+    "@forge/bridge": "5.14.1",
+    "@forge/react": "11.13.1",
+    "@forge/resolver": "1.7.1",
+    "@radix-ui/react-collapsible": "^1.1.12",
+    "@radix-ui/react-tabs": "^1.1.13",
+    "classnames": "^2.5.1",
+    "lucide-react": "^1.0.1",
+    "react": "^18.2.0",
+    "react-json-pretty": "^2.2.0",
+    "react-resizable-panels": "^4.7.5"
+  }
+}

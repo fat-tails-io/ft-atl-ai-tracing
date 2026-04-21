@@ -1,0 +1,37 @@
+---
+title: "Reveal.js-typed Example"
+format:
+  revealjs: default
+revealjs-plugins:
+  - RevealjsTyped
+---
+
+# Reveal.js Typed Demo
+
+## Regular Slide
+
+- No typing effect here
+- Just normal content
+
+## Typed Slide 1
+
+::: {.typed data-typed-speed="20" data-typed-reset-on-slide-change="true"}
+- Hello World!
+- ~~Do you like this?~~
+- This is a typing **BOLD** effect!
+:::
+
+## Typed Slide 2
+
+::: {.typed data-typed-speed="10" data-typed-fade-out="true"}
+- Hello World!
+- ~~Do you like this?~~
+- This is a **BOLD** effect!
+:::
+
+## More content
+
+- You can reuse `data-typed` on any slide element
+- Add `data-typed-reset-on-slide-change="true"` to restart when revisiting the slide
+
+TODO [TR-5] Update the presentation

@@ -1,0 +1,10 @@
+project:
+  type: website
+  output-dir: docs
+    
+website:
+  favicon: fat-tails-alt-32x32.png
+  open-graph: true
+  google-analytics:
+    tracking-id: "G-NTEKXW82C8"
+    anonymize-ip: true

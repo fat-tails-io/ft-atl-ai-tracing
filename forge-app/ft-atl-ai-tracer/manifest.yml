@@ -1,0 +1,38 @@
+modules:
+  jira:projectPage:
+    - key: -ft-atl-ai-tracer-hello-world-project-page
+      resource: main
+      resolver:
+        function: resolver
+      render: native
+      title: " ft-atl-ai-tracer"
+  function:
+    - key: resolver
+      handler: index.handler
+resources:
+  - key: main
+    path: src/frontend/index.jsx
+app:
+  runtime:
+    name: nodejs22.x
+    memoryMB: 256
+    architecture: arm64
+  id: ari:cloud:ecosystem::app/76cd3579-f456-4249-8d90-508fd3269ead
+
+permissions:
+  scopes:
+    - storage:app
+    - read:app-system-token
+  external:
+    fetch:
+      backend:
+        - 'https://ea85-140-228-85-33.ngrok-free.app'
+
+remotes:
+  - key: ai-sync-remote
+    baseUrl: 'https://ea85-140-228-85-33.ngrok-free.app'
+    operations:
+      - compute
+    auth:
+      appSystemToken:
+        enabled: true

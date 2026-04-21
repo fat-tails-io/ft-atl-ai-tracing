@@ -1,0 +1,474 @@
+---
+title: "AI Traceability"
+subtitle: '"Safely Scaling" Human-AI Collaboration w/ Atlassian...'
+author: "Justin Townsend"
+profile: "[LNKD - JT](https://www.linkedin.com/in/justin-j-townsend/)"
+atl_comm: "[ATL - JT](https://community.atlassian.com/user/profile/a248bc14-7d4d-48e9-8c30-0263f13bb552)"
+description: |
+  "Safely Scaling Human-AI Collaboration with Atlassian Intelligence using Rovo, 22nd April 2026."
+format:
+  revealjs:
+    theme: default
+    include-in-header:
+      - text: |
+          <style>
+          .callout.callout-style-simple {
+            text-align: left;
+            display: inline-flexbox;
+          }
+          </style>
+    footnotes-hover: true
+    reference-location: document
+    footer: "[Justin Townsend](https://www.linkedin.com/in/justin-j-townsend/)"
+    logo: /images/fat-tails-alt.png
+    show-progress: true
+    transition: fade
+    transition-speed: default
+    incremental: false
+    lightbox:
+      match: auto
+    mermaid:
+      theme: neutral
+revealjs-plugins:
+  - RevealjsTyped
+filters:
+  - roughnotation
+---
+
+## Context is Key 😀
+
+::: {.callout-note appearance="simple" title="AI Traceability in Atlassian's Eco-System @ 22nd April 2026"}
+
+* "Rovo" is the "umbrella" term for all of Atlassian's AI (user) features, including:
+	+ Rovo Chat
+	+ Studio (for Rovo)
+  + Rovo Chrome extension
+  + Rovo Dev (Chat)
+  + Rovo Dev (CLI)
+  + Rovo Dev (for Jira)
+  + newly, Remix w/ Rovo AND...
+* likely more to come!
+  + New genAI tool combinations often increase LLM usage, through new model introduction and further token consumption.
+:::
+
+::: {.notes}
+* Context is Key, as the "press" constantly reminds us just now...
+* Some terminology may be less obvious to infrequent Atlassian users, so a brief explanation of the state-of-play today...
+* I've dated the statement for reasons I'll mention in the upcoming disclaimer...
+:::
+
+## Thank You...
+* [Atlasssian Community, London](https://ace.atlassian.com/london/), (Stuart, Jay, Bruce, Abi)
+* Jesus F. and Lloyds for sharing their migration journey
+
+::: {.notes}
+
+::: {style="font-size:18px"}
+
+* ACE, London: I hope I have your names correctly listed by length of service to ACE London
+* Jesus Fernandez: Thank you, TOUGH act to follow.
+  + Knowing more about the REAL decisions you're facing, and
+  + Staring into the bank's crystal ball for enduring funding decisions... MUCH APPRECIATED
+* No sooner do companies finish an epic migration to cloud (pun intended) do you turn to decisions about AI AND
+  + Which ones to switch on...?
+
+:::
+
+:::
+
+## {#slide4-id data-menu-title="Disclaimer"}
+::: {.callout-note appearance="simple" title="Disclaimer @ 22nd April 2026"}
+Views and opinions expressed in this presentation are solely my own and do not necessarily reflect the official positions, strategies, or views of any organisation I represent. While every effort has been made to ensure that principles presented here are well-considered to move forward constructively with embedded A.I., they may be superseded or invalidated by features, changes, or developments introduced in future Atlassian releases.
+:::
+
+::: {.notes}
+
+::: {style="font-size:18px"}
+
+* AI is a HUGE topic and embedded AI is just one aspect of it. I've certainly been "conflicted" about what to cover this evening
+* What you'll see shouldn't be considered "best practice" or a "how-to" guide, it is hoped it'll motivate your thinking on what's currently possible for scaled AI (with Rovo)
+  + AND what might need to come, to satisfy auditability / intervention
+* I've tried to cram a bunch of things in, so if something is unclear as we go, put your hand up, I'll do my best to clarify / answer your questions...
+* My details are at the end so we can get to the interesting stuff straightaway...
+
+:::
+
+:::
+
+# {#slide5-id data-menu-title="Jira's Many Faces..."}
+
+![](/images/jira-256px.png "Jira"){.nostretch fig-align="center"}
+
+::: {.notes}
+* Jira is arguably Atlassian's most recognised product
+* To get participation going a bit
+* Given the focus is on Atlassian products tonight, I thought
+  + Let's get a Show of Hands for which of these flavours of Jira you recognize
+* Each one is a screenshot (except one, which is text - itself a HINT)
+  + HINT: I find focusing on the iconography and text on the screen can help date the instance type.
+:::
+
+## {#slide6-id data-menu-title="Jira's Faces... (1)"}
+
+![](/images/jira-1.png){width=50% fig-align="center" .lightbox}
+
+::: {.fragment style="text-align: left;"}
+* Jira Data Center: Sprint Report
+:::
+
+::: {.notes}
+* PLEASE SHOUTOUT IF TOO SMALL
+* Hands-up if you recognise this as Jira?
+  + Keep your hands-up if you think you recognise which flavour of Jira this is?
+	+ Anyone willing to shout out which one?
+* Sprint Report, Jira Data Center
+:::
+
+## {#slide7-id data-menu-title="Jira's Faces... (2)"}
+
+![](/images/jira-2.png){width=50% fig-align="center" .lightbox}
+
+::: {.fragment style="text-align: left;"}
+* Jira Cloud: Spaces (Project) Board
+:::
+
+::: {.notes}
+* Again, PLEASE SHOUTOUT IF TOO SMALL
+* Again, hands-up if you recognise this as Jira?
+* Keep your hands-up if you think you recognise which flavour of Jira this is?
+* Anyone willing to shout out which one?
+* Project Board, Jira Cloud
+:::
+
+## {#slide8-id data-menu-title="Jira's Faces... (3)"}
+
+:::{ .typed data-typed-speed="40" data-typed-reset-on-slide-change="true" data-typed-start-delay="1000" data-typed-show-cursor="false" }
+git commit -m 'FT-12 #time 4h 30m #comment UI Updated.'
+:::
+
+::: {.fragment style="text-align: left;"}
+* hashtags might give it away...
+	+ [#time...]{.rn-fragment rn-type=underline rn-color=red},
+	+ [#comment...]{.rn-fragment rn-type=underline rn-color=red}
+:::
+
+::: {.fragment style="text-align: left;"}
+* Jira Smart Commits: (Extended) Git CLI
+:::
+
+::: {.notes}
+
+::: {style="font-size:18px"}
+
+* Hands-up if you recognise this as Jira?
+  + Keep your hands-up if you think you recognise which flavour of Jira this is?
+	+ Anyone willing to shout out which one it is?
+* Jira Smart Commits: (Extended) Git CLI
+  + I remember doing this integration for a large telco (back in the day) thinking it was THE UNLOCK to productivity and transparency...
+  + I was SOOO enthusiastic about it
+    - Probably had some PowerPoint slides about it...
+  + I think if you have a role in "DevRel", "hats-off" to you...
+    - it's sometimes hard to know what engineers / developers may care about
+
+:::
+
+:::
+
+## {#slide8-id data-menu-title="Jira's Faces... (4)" visibility="hidden"}
+
+![](/images/jira-4.png){.lightbox width=50% fig-align="center"}
+
+::: {.fragment style="text-align: left;"}
+* VS Code - Atlassian extension: + Custom (JQL) filter
+:::
+
+::: {.notes}
+* Again, PLEASE SHOUTOUT IF IT TOO SMALL
+* Again, hands-up if you recognise this as Jira?
+  + Keep your hands-up if you think you recognise which flavour of Jira this is?
+	+ Anyone willing to shout out which one it is?
+* Custom filter, Atlassian extension, VS Code
+:::
+
+## {#slide10-id data-menu-title="Jira's Faces... (5)"}
+
+BUT, DO YOU Know Jira's Face like this...?
+
+![](/images/jira-5.png){.lightbox width=75% fig-align="center"}
+
+:::{.fragment }
+* Modern, integrated Atlassian at YOUR point of interaction.
+:::
+
+::: {.notes}
+
+::: {style="font-size:18px"}
+
+* BUSY... Huh!
+  + This is my IDE (VS Code here today, but I've had success with the setup in Cursor also)
+	+ My agent Co-Pilot on the right side-bar (GitHub's Copilot, no proxy)
+* Middle-Top the editor panel has a Jira ticket
+  + Atlassian extension installed from the marketplace
+    - the (*.vsix) extension might require internal approval
+	+ I've configured it with a custom (JQL) filter to show me the work items I'm interested in, from the FT project (Jira space)
+* Top-left, I've got a code repository (SVN connected, this one is Git, could be BitBucket)
+* Middle-left, I've a collapsed panel with the (branch) source-control history
+* Bottom-left, most relevant this evening, I've configured the new Rovo Dev extension
+  + For tonight's presentation I've worked with CHAT
+  + It's a bit more obvious what's happening
+    - the CLI is also available
+* On closer with the chat you can witness we're BOTH getting a bit confused
+  + IM(H)O - companies already pay for "confusion / learning" of their employees
+    - (in delays, extensions, re-basing timelines, learning, mentoring etc.),
+	+ Perhaps AI chat can clear-up confusion more quickly
+* Eagle-eyed amongst you SHOULD notice the open ticket (Top-Middle) and the Forge work taking place (Bottom-Middle) are for differnt Jira projects..
+  + With a highly configurable IDE interface and Rovo Dev
+	+ IT's REALISTIC to be working MORE consistently, on multiple projects at once!
+* But CAN we get there SAFELY...?
+
+:::
+
+:::
+
+# {#slide11-id data-menu-title="WHAT... is the point of all this?"}
+
+![](/images/confused-man.png){.nostretch width=30% fig-align="center" .nolightbox}
+
+WHAT... is the point of all this?
+
+:::{.notes}
+* Ways of interacting with Atlassian are increasing...
+  + so work should be made easier?
+  + it should feel more weightless
+* For users to feel these benefits... 
+  + We need some safety, some governance, BUT
+  + To do this well
+  + It should feel "close-to" invisible in the user experience
+:::
+
+## ✨ Weightless Work with Rovo?{.smaller}
+
+:::{.fragment style="text-align: left;"}
+
+* We're switching on the (embedded) AI
+  + Let's avoid the strategic roadmap becoming our competitor's backlog
+* Mitigate those [unintended consequences...]{.rn-fragment rn-type=box rn-color=orange}
+
+:::
+
+:::{.fragment}
+
+![](/images/embedded-ai-switchon.png)
+
+:::
+
+::: {.notes} 
+
+::: {style="font-size:18px"}
+
+* Switching it on, you're assuming responsibility (incl. Biases of integrated LLMs)
+* We’re at a moment when genAI has entered every C-Suite discussion, but still at the edge of REAL impact for most businesses
+* As a Programme Manager / Enterprise Architect, let's throw-up a framework to give some context here, I find ACE is pretty strasightforward
+  + Align - Establishing boundaries for Rovo
+  + Control - Controlling Rovo's domain for action (Prompt Design, Tool Permissions, Available Skills)
+  + Evidence - Intervention States, Session Analytics, Drift Analysis
+
+:::
+
+:::
+
+## {#slide13-id data-menu-title="How Rovo Helps Us Right Now...?" .smaller}
+
+|                    | Control                   | Evidence                        | Intervene |
+|--------------------|:-------------------------:|:--------------------------------|:---------:|
+| Admin              | ✅ Rovo access            | ✅ Rovo Insights               | ❌       |
+| Audit              | -                         | ✅ ALQL = 'activity ~"Rovo"'   | -        |
+| Insights           | -                         | ✅ Analytics                   | ❌       |
+| Studio             | ✅ Rovo Agent Permissions | ❌                             | ❌      |
+| Forge              | -                         | ✅ Developer Console           | ✅ / ❌ |
+| Extension (*.vsix) | ✅ Rovo Dev Settings     | ✅ Logs                        | ✅ / ❌ | 
+
+: Rovo Control & Insights (TOGAF View)
+
+:::{.notes}
+* So if we TOGAF out a "Rovo View"
+  + What is Rovo doing to support here?
+* Table requires a little explanation.
+  + With Rovo it turns out we can ALREADY DO, quite a lot
+  + Turns out, quite alot
+  + From the Admin console we can control Rovo's access
+  + We can see what Rovo's been up to, with the Insights
+  + From Audit Logs and Insights 
+:::
+
+## Rovo (Dev) -> Tell Me MORE?{.smaller}
+
+:::{.fragment style="text-align: left;"}
+* Where THE WORK starts
+  + What are ALL those Rovos doing?
+:::
+
+:::{.fragment}
+
+::: {#fig-rovoforge layout-ncol=2}
+![Rovo Dev (Sonnet 4.5) -> Forge App, GraphQL API](/images/rovo-atlassian-external.png){.lightbox group="rovo-forge"}
+
+![Forge App -> Missing Scope](/images/rovo-atlassian-external-error.png){.lightbox group="rovo-forge"}
+
+Rovo Analysis with a Forge App?
+:::
+
+:::
+
+:::{.fragment style="text-align: left;"}
+* ❌ OK, another approach?
+:::
+
+::: {.notes}
+* Rovo Dev has a 'YOLO Mode', it looks a bit MUCH for us just now
+  + Even so, with Rovo Dev (set to Sonnet 4.5)
+  + I've vibed-out a Forge app
+    - Designed to dig deeper into all those Rovos
+	+ All seems to be going well, THEN... UH OH!
+:::
+
+## {#slide15-id data-menu-title="Rovo (Dev) -> Forge Architecture" .smaller}
+
+![AI Traceability -> Forge App Architecture](/images/rovo-forgeapp.svg){.nolightbox}
+
+:::{.fragment style="text-align: left;"}
+* So where next?
+  + EVEN more Rovo Dev features are available
+    - Sessions, Logging etc.
+  + I have renewed "hope"... 
+* Vibe-out more features for my Forge App
+  + Can I load some Rovo Dev session logs to prove a point? [^1]
+:::
+
+[^1]: Solution shown is sub-optimal at-scale, consider a dedicated SRE tool.
+
+::: {.notes}
+* At this point an overview of the Forge App solutions architecture is warranted...
+  1. User Interface (Atlassian's UI Kit)
+  2. Forge Remote Backend (another Forge App)
+    2.1 Used to reach the GraphQL API
+  3. Local storage to Forge (KVS)
+  4. GraphQL API (OAuth)
+  5. Resolvers link frontend and backend components together
+    5.1 In this example, "Sync Agents from GraphQL API" button in the app
+:::
+
+## Rovo (Dev) -> More to Give? {.smaller}
+
+![Rovo Dev -> Limit Exceeded](/images/rovodev-credit-limit-exceeded.png){.lightbox width=50% fig-align="center"}
+
+:::{.fragment style="text-align: left;"}
+* After 8.5 days of the month, I bust through the orgnisation's token pool [^2]
+  + NO MORE for anyone else it seems
+  + Back to the budget-holder cap-in-hand?
+* BUT is this MY fault?
+  + NO separate limits for development and testing, as yet...?
+:::
+
+[^2]: Some AI solutions make token consumption a 1st class citizen.
+
+::: {.notes}
+* In a small business, where the budget holder is the product developer
+  + ABSOLUTELY, this responsibility sits with one person
+* In a larger business, this would be devolved...
+  + and the unit cost efficiency of Rovo credits is the shared responsibility of Finance / IT mgt
+  + In a sophisticated large enterprise, a specialist AI / ML / Model Risk function would give valuable input
+* Resource sharing is something to be learned, across teams, over time.
+  + Some similarities to resource pooling in Spark, or
+  + pod resource management in Kubernetes
+:::
+
+## Rovo (Dev) -> "Sense Making" {.smaller}
+
+[![](/images/rovo-session-analytics-d3radial.png){width=75%}](embedded-ai-rovo-d3-radial.html)
+
+* No sub-agents this time, BUT
+* +220 LLM calls, +200 tool calls later...
+
+::: {.notes}
+
+::: {style="font-size:18px"}
+* Radial chart layouts can be intuitive for "getting-to-grips" with what's going on in an agent session.
+  + In our example it took several sessions to get the Forge App from earlier, BUT
+  + For illustration purposes, I've added a single Rovo Dev session log here...
+* If you'll let me explain
+* D3's radial tree, is a circular tree-layout plot...
+  + the central point provides the user / agent perspective
+  + the start of the chart (it's first messages) appear just to the right of 12 o'clock
+  + subsequent messages continue round in a clockwise manner
+* Edges are coloured BLUE for a request (from me, or a tool), RED for a response
+  + Nodes are coloured coded by type (system / user-prompt, text, tool-call etc.)
+    - calls to the LLM (in this case Anthropic) are FURTHER identified with a GREY circle surrounding the node
+* We can explore what's happened, by hovering over the edges and nodes of the chart
+
+:::
+
+:::
+
+## Rovo -> Where Does That Leave US?{.smaller}
+
+* Control and guidance ✅ ([Settings](https://support.atlassian.com/rovo/docs/manage-rovo-dev-cli-settings/), [AGENTS.md](https://support.atlassian.com/rovo/docs/use-memory-in-rovo-dev-cli/), [MCP Configuration](https://support.atlassian.com/rovo/docs/rovo-dev-and-model-context-protocol-mcp/))
+* Reports and tracing ✅ ([Insights](https://www.atlassian.com/software/rovo/guides/admin-guide/monitoring-dashboards#access-rovo-insights), [Session Logs](https://support.atlassian.com/rovo/docs/manage-sessions-in-rovo-dev-cli/#Tips-for-working-with-sessions)) [^3] 
+BUT
+* Runtime intervention ❌, needs change / customisation  
+* In the meantime?
+  + DPA caution
+  + "Sandbox" my Rovo prompts before deployment?
+    - Monitor emergent behaviour in logs
+  + Re-cycle the sandbox for new prompts
+    - Periodically deliver new "prompts" designed to guide agent behaviour...
+
+[^3]: [CDAC-99756: rovo:atlassian-external](https://community.developer.atlassian.com/t/forge-storage-forge-remote-graphql-rovo-atlassian-external/99756)
+
+:::{.notes}
+* I've got control, I've got guidance
+* I've got reports, I've got tracing
+* BUT we're not quite there with intervention...
+  + SO... be cautious with Atlassian's [current](https://support.atlassian.com/rovo/docs/rovo-data-privacy-and-usage-guidelines/) and [evolving](https://support.atlassian.com/security-and-access-policies/docs/manage-data-contribution-for-your-atlassian-organization/) DPAs and
+  + Current impact for your business (an amount of extra-territorial processing)
+* (SOME) of the capability is there, BUT the accountability is yours
+:::
+
+## 🔮 Rovo (Dev) -> Near Future...?{.smaller}
+
+:::{.fragment style="text-align: left;"}
+
+* Leading agent engineering platforms [provide a hint]{.rn-fragment rn-type="highlight" rn-color="yellow"}?
+
+:::
+
+:::{.fragment}
+
+```{.bash code-line-numbers="1,3,8"}
+acli rovodev run /hooks
+
+acli rovodev run /hooks before_agent
+acli rovodev run /hooks after_agent
+acli rovodev run /hooks before_model
+acli rovodev run /hooks after_model
+
+acli rovodev run /hooks wrap_model_call
+acli rovodev run /hooks wrap_tool_call
+```
+
+:::
+
+:::{.fragment}
+  
+🤷🏻‍♂️  🤷🏻‍♂️  🤷🏻‍♂️  🤷🏻‍♂️  🤷🏻‍♂️ ?
+  
+:::
+
+:::{.notes}
+* Look to leading AI tools for guidance?
+* Maybe some hooks for Rovo, to enable "intervention" approaches
+:::
+
+# Why Listen to Me...?{footer=false}
+
+![](/images/jt-profile.png){.nolightbox width=75% fig-align="center"}

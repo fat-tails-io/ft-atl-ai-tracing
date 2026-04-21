@@ -1,0 +1,749 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Atlassian Intelligence: Rovo Session Analytics</title>
+  <script src="https://d3js.org/d3.v7.min.js"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: "Inter", "Segoe UI", system-ui, -apple-system, sans-serif;
+      background: #111213;
+      color: #E2E3E4;
+      overflow: hidden;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    header {
+      padding: 12px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: #18191A;
+      border-bottom: 1px solid #2B2C2F;
+      flex-shrink: 0;
+    }
+    header h1 {
+      font-size: 16px;
+      font-weight: 600;
+      letter-spacing: 0.02em;
+    }
+    header h1 span { color: #DDB30E; }
+
+    #chart-container {
+      flex: 1;
+      position: relative;
+      overflow: hidden;
+    }
+
+    svg { display: block; }
+
+    /* Tooltip */
+    #tooltip {
+      position: absolute;
+      pointer-events: none;
+      background: #18191A;
+      border: 1px solid #303134;
+      border-radius: 8px;
+      padding: 10px 14px;
+      font-size: 12px;
+      line-height: 1.5;
+      max-width: 360px;
+      opacity: 0;
+      transition: opacity 0.15s ease;
+      z-index: 100;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+    }
+    #tooltip.visible { opacity: 1; }
+    #tooltip .tt-label {
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: #96999E;
+      margin-top: 4px;
+    }
+    #tooltip .tt-label:first-child { margin-top: 0; }
+    #tooltip .tt-value {
+      color: #E2E3E4;
+      word-break: break-word;
+    }
+    #tooltip .tt-value.highlight { color: #DDB30E; font-weight: 600; }
+
+    /* Legend */
+    #legend {
+      position: absolute;
+      bottom: 16px;
+      right: 16px;
+      background: #18191Aee;
+      border: 1px solid #2B2C2F;
+      border-radius: 10px;
+      padding: 14px 18px;
+      font-size: 11px;
+      line-height: 1.6;
+      z-index: 50;
+      max-width: 260px;
+    }
+    #legend h2 {
+      font-size: 12px;
+      font-weight: 500;
+      color: #E2E3E4;
+      margin-bottom: 10px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid #2B2C2F;
+    }
+    #legend h3 {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: #96999E;
+      margin-bottom: 8px;
+    }
+    .legend-section { margin-bottom: 10px; }
+    .legend-section:last-child { margin-bottom: 0; }
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 2px;
+    }
+    .legend-swatch {
+      width: 14px;
+      height: 14px;
+      border-radius: 3px;
+      flex-shrink: 0;
+    }
+    .legend-swatch.circle {
+      border-radius: 50%;
+    }
+    .legend-swatch.dashed-border {
+      border: 2px dashed #E774BB;
+      background: transparent;
+      width: 14px;
+      height: 14px;
+    }
+    .legend-line {
+      width: 20px;
+      height: 3px;
+      border-radius: 2px;
+      flex-shrink: 0;
+    }
+    /* Stats panel */
+    #stats {
+      position: absolute;
+      bottom: 16px;
+      left: 16px;
+      background: #18191Aee;
+      border: 1px solid #2B2C2F;
+      border-radius: 10px;
+      padding: 14px 18px;
+      font-size: 11px;
+      line-height: 1.8;
+      z-index: 50;
+      min-width: 200px;
+    }
+    #stats h3 {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: #96999E;
+      margin-bottom: 6px;
+      margin-top: 10px;
+    }
+    #stats h3:first-child { margin-top: 0; }
+    .stat-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+    }
+    .stat-row .stat-label {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .stat-swatch {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+    .stat-count {
+      font-variant-numeric: tabular-nums;
+      color: #A9ABAF;
+    }
+
+    #controls {
+      position: absolute;
+      top: 12px;
+      right: 16px;
+      z-index: 50;
+      display: flex;
+      gap: 8px;
+    }
+    #controls button {
+      background: #242528;
+      color: #E2E3E4;
+      border: 1px solid #2B2C2F;
+      border-radius: 6px;
+      padding: 6px 14px;
+      font-size: 12px;
+      font-family: inherit;
+      cursor: pointer;
+      transition: background 0.15s ease;
+    }
+    #controls button:hover { background: #303134; }
+  </style>
+</head>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-NTEKXW82C8"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-NTEKXW82C8');
+</script>
+<body>
+
+<header>
+  <h1>Atlassian Intelligence: <span>Rovo Session Analytics</span></h1>
+</header>
+
+<div id="chart-container">
+  <div id="controls">
+    <button id="reset-zoom">Reset Zoom</button>
+    <button id="download-svg">Download SVG</button>
+  </div>
+  <div id="stats"></div>
+  <div id="tooltip"></div>
+  <div id="legend">
+    <h2>Rovo Single Session @ 22nd April 2026</h2>
+    <div class="legend-section">
+      <h3 style="text-decoration: underline dotted;">Request / Response</h3>
+      <div class="legend-item"><div class="legend-line" style="background:#669DF1"></div> request</div>
+      <div class="legend-item"><div class="legend-line" style="background:#F87168"></div> response</div>
+    </div>
+    <div class="legend-section">
+      <h3 style="text-decoration: underline dotted;">Prompt Type</h3>
+      <div class="legend-item"><div class="legend-swatch circle" style="background:#7E8188"></div> system-prompt</div>
+      <div class="legend-item"><div class="legend-swatch circle" style="background:#6CC3E0"></div> user-prompt</div>
+      <div class="legend-item"><div class="legend-swatch circle" style="background:#4BCE97"></div> text</div>
+      <div class="legend-item"><div class="legend-swatch circle" style="background:#C97CF4"></div> tool-call</div>
+      <div class="legend-item"><div class="legend-swatch circle" style="background:#FCA700"></div> tool-return</div>
+    </div>
+    <div class="legend-section">
+      <h3 style="text-decoration: underline dotted;">⚠️ Important</h3>
+      <div class="legend-item"><div class="legend-swatch circle" style="background:#DDB30E; border: 2px solid #96999E;"></div> LLM provider (anthropic)</div>
+      <div class="legend-item"><div class="legend-swatch dashed-border circle"></div> dynamic_ref present</div>
+    </div>
+  </div>
+</div>
+
+<script>
+(async function () {
+
+  // -- Colour palette (Atlassian Design System, 400-stop for dark mode) --
+  const LINK_COLOURS = { request: "#669DF1", response: "#F87168" };
+  const PART_KIND_COLOURS = {
+    "system-prompt": "#7E8188",
+    "user-prompt":   "#6CC3E0",
+    "text":          "#4BCE97",
+    "tool-call":     "#C97CF4",
+    "tool-return":   "#FCA700"
+  };
+  const PROVIDER_COLOUR  = "#DDB30E";
+  const PROVIDER_BORDER  = "#96999E";
+  const DYNAMIC_REF_BORDER = "#E774BB";
+  const ROOT_COLOUR = "#E2E3E4";
+
+  // -- Load data --
+  const raw = await d3.json("data/rovo-session-042026.json");
+  const messages = raw.message_history;
+
+  // -- Build hierarchy --
+  const hierarchy = {
+    name: "Session",
+    _type: "root",
+    children: messages.map((msg, i) => ({
+      name: `msg-${i}`,
+      _type: "message",
+      kind: msg.kind,
+      provider_name: msg.provider_name || null,
+      timestamp: msg.timestamp,
+      partCount: (msg.parts || []).length,
+      children: (msg.parts || []).map((part, j) => {
+        const label = part.part_kind || "unknown";
+        let suffix = "";
+        if (part.tool_name) suffix = ` (${part.tool_name})`;
+        return {
+          name: `${label}${suffix}`,
+          _type: "part",
+          part_kind: part.part_kind,
+          tool_name: part.tool_name || null,
+          dynamic_ref: part.dynamic_ref || null,
+          content: typeof part.content === "string" ? part.content.slice(0, 250) : null,
+          tool_call_id: part.tool_call_id || null,
+          timestamp: part.timestamp || null,
+          _parentKind: msg.kind,
+          _parentProvider: msg.provider_name || null
+        };
+      })
+    }))
+  };
+
+  // -- Compute stats --
+  const stats = {
+    request: messages.filter(m => m.kind === "request").length,
+    response: messages.filter(m => m.kind === "response").length,
+    provider: messages.filter(m => m.provider_name).length,
+  };
+  const allParts = messages.flatMap(m => m.parts || []);
+  const partKinds = ["system-prompt", "user-prompt", "text", "tool-call", "tool-return"];
+  partKinds.forEach(pk => { stats[pk] = allParts.filter(p => p.part_kind === pk).length; });
+  stats.dynamic_ref = allParts.filter(p => p.dynamic_ref).length;
+
+  function statRow(colour, label, count, bold) {
+    const style = bold ? "font-weight:700; font-style:italic;" : "";
+    return `<div class="stat-row">
+      <span class="stat-label"><span class="stat-swatch" style="background:${colour}"></span><span style="${style}">${label}</span></span>
+      <span class="stat-count">${count}</span>
+    </div>`;
+  }
+
+  document.getElementById("stats").innerHTML =
+    `<h3>Messages</h3>` +
+    statRow(LINK_COLOURS.request, "request", stats.request) +
+    statRow(LINK_COLOURS.response, "response", stats.response) +
+    statRow(PROVIDER_COLOUR, "LLM provider (anthropic)", stats.provider, true) +
+    `<h3>Parts</h3>` +
+    partKinds.map(pk => statRow(PART_KIND_COLOURS[pk], pk, stats[pk])).join("") +
+    `<h3>Special</h3>` +
+    statRow(DYNAMIC_REF_BORDER, "dynamic_ref", stats.dynamic_ref);
+
+  // -- Layout dimensions --
+  const container = document.getElementById("chart-container");
+  const width = container.clientWidth;
+  const height = container.clientHeight;
+  const radius = Math.min(width, height) / 2 - 80;
+
+  const root = d3.hierarchy(hierarchy);
+  const treeLayout = d3.tree()
+    .size([2 * Math.PI, radius])
+    .separation((a, b) => (a.parent === b.parent ? 1 : 2) / a.depth);
+  treeLayout(root);
+
+  // -- SVG with zoom --
+  const svg = d3.select("#chart-container")
+    .append("svg")
+    .attr("width", width)
+    .attr("height", height);
+
+  const g = svg.append("g")
+    .attr("transform", `translate(${width / 2},${height / 2})`);
+
+  const zoom = d3.zoom()
+    .scaleExtent([0.5, 3])
+    .wheelDelta(event => -event.deltaY * (event.deltaMode === 1 ? 0.05 : event.deltaMode ? 1 : 0.002))
+    .on("zoom", (event) => {
+      g.attr("transform",
+        `translate(${width / 2 + event.transform.x},${height / 2 + event.transform.y}) scale(${event.transform.k})`
+      );
+    });
+  svg.call(zoom);
+
+  document.getElementById("reset-zoom").addEventListener("click", () => {
+    svg.transition().duration(500).call(zoom.transform, d3.zoomIdentity);
+  });
+
+  // -- SVG Download --
+  document.getElementById("download-svg").addEventListener("click", () => {
+    svg.call(zoom.transform, d3.zoomIdentity);
+
+    requestAnimationFrame(() => {
+      const clone = svg.node().cloneNode(true);
+      const ns = "http://www.w3.org/2000/svg";
+
+      clone.setAttribute("xmlns", ns);
+      clone.setAttribute("xmlns:xlink", "http://www.w3.org/1999/xlink");
+      clone.setAttribute("viewBox", `0 0 ${width} ${height}`);
+      clone.setAttribute("font-family", '"Inter", "Segoe UI", system-ui, -apple-system, sans-serif');
+
+      const bgRect = document.createElementNS(ns, "rect");
+      bgRect.setAttribute("width", "100%");
+      bgRect.setAttribute("height", "100%");
+      bgRect.setAttribute("fill", "#111213");
+      clone.insertBefore(bgRect, clone.firstChild);
+
+      const titleEl = document.createElementNS(ns, "title");
+      titleEl.textContent = "Atlassian Intelligence Session Analysis";
+      clone.insertBefore(titleEl, clone.firstChild);
+
+      const descEl = document.createElementNS(ns, "desc");
+      descEl.textContent = `Radial tree visualization of Rovo agent session ${raw.id || ""}.`
+        + ` ${messages.length} messages, ${root.descendants().length} nodes.`
+        + ` Generated ${new Date().toISOString()}.`;
+      titleEl.after(descEl);
+
+      const metaEl = document.createElementNS(ns, "metadata");
+      metaEl.innerHTML = `<session-id>${raw.id || "unknown"}</session-id>`
+        + `<timestamp>${raw.timestamp || ""}</timestamp>`
+        + `<message-count>${messages.length}</message-count>`
+        + `<node-count>${root.descendants().length}</node-count>`;
+      descEl.after(metaEl);
+
+      // -- Build SVG-native legend --
+      const legendG = document.createElementNS(ns, "g");
+      const pad = 18;
+      const lx = width - 270;
+      const ly = height - 310;
+      legendG.setAttribute("transform", `translate(${lx}, ${ly})`);
+
+      const legendBg = document.createElementNS(ns, "rect");
+      legendBg.setAttribute("width", "254");
+      legendBg.setAttribute("height", "294");
+      legendBg.setAttribute("rx", "10");
+      legendBg.setAttribute("fill", "#18191A");
+      legendBg.setAttribute("fill-opacity", "0.93");
+      legendBg.setAttribute("stroke", "#2B2C2F");
+      legendBg.setAttribute("stroke-width", "1");
+      legendG.appendChild(legendBg);
+
+      let cy = 24;
+      function svgText(text, x, y, opts = {}) {
+        const t = document.createElementNS(ns, "text");
+        t.setAttribute("x", x);
+        t.setAttribute("y", y);
+        t.setAttribute("fill", opts.fill || "#E2E3E4");
+        t.setAttribute("font-size", opts.fontSize || "11");
+        if (opts.fontWeight) t.setAttribute("font-weight", opts.fontWeight);
+        if (opts.textDecoration) t.setAttribute("text-decoration", opts.textDecoration);
+        if (opts.letterSpacing) t.setAttribute("letter-spacing", opts.letterSpacing);
+        t.textContent = text;
+        legendG.appendChild(t);
+        return t;
+      }
+
+      function svgCircle(cx, cy, r, fill, opts = {}) {
+        const c = document.createElementNS(ns, "circle");
+        c.setAttribute("cx", cx);
+        c.setAttribute("cy", cy);
+        c.setAttribute("r", r);
+        c.setAttribute("fill", fill);
+        if (opts.stroke) { c.setAttribute("stroke", opts.stroke); c.setAttribute("stroke-width", opts.strokeWidth || "2"); }
+        if (opts.dasharray) c.setAttribute("stroke-dasharray", opts.dasharray);
+        legendG.appendChild(c);
+      }
+
+      function svgLine(x1, y1, x2, y2, colour) {
+        const l = document.createElementNS(ns, "line");
+        l.setAttribute("x1", x1); l.setAttribute("y1", y1);
+        l.setAttribute("x2", x2); l.setAttribute("y2", y2);
+        l.setAttribute("stroke", colour);
+        l.setAttribute("stroke-width", "3");
+        l.setAttribute("stroke-linecap", "round");
+        legendG.appendChild(l);
+      }
+
+      svgText("Rovo Single Session @ 22nd April 2026", pad, cy, { fontSize: "12", fontWeight: "500" });
+      cy += 10;
+      const divLine = document.createElementNS(ns, "line");
+      divLine.setAttribute("x1", pad); divLine.setAttribute("y1", cy);
+      divLine.setAttribute("x2", 236); divLine.setAttribute("y2", cy);
+      divLine.setAttribute("stroke", "#2B2C2F"); divLine.setAttribute("stroke-width", "1");
+      legendG.appendChild(divLine);
+      cy += 16;
+
+      svgText("REQUEST / RESPONSE", pad, cy, { fill: "#96999E", fontSize: "10", letterSpacing: "0.08em", textDecoration: "underline dotted" });
+      cy += 18;
+      svgLine(pad, cy - 4, pad + 18, cy - 4, "#669DF1"); svgText("request", pad + 26, cy); cy += 16;
+      svgLine(pad, cy - 4, pad + 18, cy - 4, "#F87168"); svgText("response", pad + 26, cy); cy += 20;
+
+      svgText("PROMPT TYPE", pad, cy, { fill: "#96999E", fontSize: "10", letterSpacing: "0.08em", textDecoration: "underline dotted" });
+      cy += 18;
+      const partItems = [
+        ["#7E8188", "system-prompt"], ["#6CC3E0", "user-prompt"], ["#4BCE97", "text"],
+        ["#C97CF4", "tool-call"], ["#FCA700", "tool-return"]
+      ];
+      partItems.forEach(([col, label]) => {
+        svgCircle(pad + 6, cy - 4, 5, col);
+        svgText(label, pad + 18, cy);
+        cy += 16;
+      });
+      cy += 4;
+
+      svgText("\u26A0\uFE0F IMPORTANT", pad, cy, { fill: "#96999E", fontSize: "10", letterSpacing: "0.08em", textDecoration: "underline dotted" });
+      cy += 18;
+      svgCircle(pad + 6, cy - 4, 5, "#DDB30E", { stroke: "#96999E", strokeWidth: "2" });
+      svgText("LLM provider (anthropic)", pad + 18, cy);
+      cy += 16;
+      svgCircle(pad + 6, cy - 4, 5, "none", { stroke: "#E774BB", strokeWidth: "2", dasharray: "3,2" });
+      svgText("dynamic_ref present", pad + 18, cy);
+
+      clone.appendChild(legendG);
+
+      // -- Inject CSS for hover tooltips --
+      const styleEl = document.createElementNS(ns, "style");
+      styleEl.textContent = `
+        .node .svg-tt { opacity: 0; pointer-events: none; transition: opacity 0.15s; }
+        .node:hover .svg-tt { opacity: 1; }
+        .node:hover circle { filter: brightness(1.3); }
+      `;
+      clone.insertBefore(styleEl, clone.querySelector("g"));
+
+      // -- Build SVG tooltip groups on each node --
+      const nodeGs = clone.querySelectorAll("g.node");
+      nodeGs.forEach(nodeG => {
+        const raw_tt = nodeG.getAttribute("data-tt");
+        if (!raw_tt) return;
+        let lines;
+        try { lines = JSON.parse(raw_tt); } catch(e) { return; }
+        if (!lines.length) return;
+
+        const ttG = document.createElementNS(ns, "g");
+        ttG.setAttribute("class", "svg-tt");
+
+        const lineHeight = 14;
+        const padX = 8, padY = 6;
+        const maxCharWidth = 6.5;
+        const maxLen = Math.max(...lines.map(l => l.length));
+        const boxW = Math.min(maxLen * maxCharWidth + padX * 2, 300);
+        const boxH = lines.length * lineHeight + padY * 2;
+
+        const bg = document.createElementNS(ns, "rect");
+        bg.setAttribute("x", "12");
+        bg.setAttribute("y", String(-boxH / 2));
+        bg.setAttribute("width", String(boxW));
+        bg.setAttribute("height", String(boxH));
+        bg.setAttribute("rx", "6");
+        bg.setAttribute("fill", "#18191A");
+        bg.setAttribute("fill-opacity", "0.95");
+        bg.setAttribute("stroke", "#303134");
+        bg.setAttribute("stroke-width", "1");
+        ttG.appendChild(bg);
+
+        lines.forEach((line, i) => {
+          const t = document.createElementNS(ns, "text");
+          t.setAttribute("x", String(12 + padX));
+          t.setAttribute("y", String(-boxH / 2 + padY + (i + 1) * lineHeight - 2));
+          t.setAttribute("fill", i === 0 ? "#E2E3E4" : "#96999E");
+          t.setAttribute("font-size", "11");
+          t.textContent = line.length > 45 ? line.slice(0, 45) + "..." : line;
+          ttG.appendChild(t);
+        });
+
+        nodeG.appendChild(ttG);
+        nodeG.removeAttribute("data-tt");
+      });
+
+      const serializer = new XMLSerializer();
+      const svgString = '<?xml version="1.0" encoding="UTF-8" standalone="no"?>\n'
+        + serializer.serializeToString(clone);
+
+      const blob = new Blob([svgString], { type: "image/svg+xml;charset=utf-8" });
+      const url = URL.createObjectURL(blob);
+
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "rovo-session-trace.svg";
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    });
+  });
+
+  // -- Helper: polar to cartesian --
+  function radialPoint(x, y) {
+    return [(y = +y) * Math.cos(x -= Math.PI / 2), y * Math.sin(x)];
+  }
+
+  // -- Determine link colour --
+  function linkColour(d) {
+    const node = d.target;
+    if (node.data._type === "message") {
+      return LINK_COLOURS[node.data.kind] || "#555";
+    }
+    if (node.data._type === "part") {
+      const parentKind = node.data._parentKind;
+      const base = LINK_COLOURS[parentKind] || "#555";
+      return d3.color(base).brighter(0.6).toString();
+    }
+    return "#555";
+  }
+
+  // -- Determine node colour --
+  function nodeColour(d) {
+    if (d.data._type === "root") return ROOT_COLOUR;
+    if (d.data._type === "message") {
+      if (d.data.provider_name) return PROVIDER_COLOUR;
+      return LINK_COLOURS[d.data.kind] || "#888";
+    }
+    if (d.data._type === "part") {
+      return PART_KIND_COLOURS[d.data.part_kind] || "#888";
+    }
+    return "#888";
+  }
+
+  // -- Node radius --
+  function nodeRadius(d) {
+    if (d.data._type === "root") return 8;
+    if (d.data._type === "message") return 5;
+    return 3.5;
+  }
+
+  // -- Draw links --
+  g.selectAll(".link")
+    .data(root.links())
+    .join("path")
+    .attr("class", "link")
+    .attr("fill", "none")
+    .attr("stroke", linkColour)
+    .attr("stroke-opacity", 0.5)
+    .attr("stroke-width", d => d.target.data._type === "message" ? 1.5 : 0.8)
+    .attr("d", d3.linkRadial()
+      .angle(d => d.x)
+      .radius(d => d.y)
+    );
+
+  // -- Build tooltip text per node --
+  function tooltipLines(d) {
+    const lines = [];
+    if (d.data._type === "root") {
+      lines.push(`Session: ${messages.length} messages, ${root.descendants().length} nodes`);
+    } else if (d.data._type === "message") {
+      lines.push(`${d.data.name} (${d.data.kind})`);
+      if (d.data.timestamp) lines.push(`Time: ${d.data.timestamp}`);
+      if (d.data.provider_name) lines.push(`Provider: ${d.data.provider_name}`);
+      lines.push(`Parts: ${d.data.partCount}`);
+    } else if (d.data._type === "part") {
+      lines.push(`Part: ${d.data.part_kind}`);
+      if (d.data.tool_name) lines.push(`Tool: ${d.data.tool_name}`);
+      if (d.data.dynamic_ref) lines.push(`Ref: ${d.data.dynamic_ref}`);
+      if (d.data.timestamp) lines.push(`Time: ${d.data.timestamp}`);
+      if (d.data.content) {
+        const preview = d.data.content.length > 80 ? d.data.content.slice(0, 80) + "..." : d.data.content;
+        lines.push(preview.replace(/\n/g, " "));
+      }
+    }
+    return lines;
+  }
+
+  // -- Draw nodes --
+  const node = g.selectAll(".node")
+    .data(root.descendants())
+    .join("g")
+    .attr("class", "node")
+    .attr("transform", d => `rotate(${d.x * 180 / Math.PI - 90}) translate(${d.y},0)`)
+    .attr("data-tt", d => JSON.stringify(tooltipLines(d)));
+
+  node.append("circle")
+    .attr("r", nodeRadius)
+    .attr("fill", nodeColour)
+    .attr("stroke", d => {
+      if (d.data.dynamic_ref) return DYNAMIC_REF_BORDER;
+      if (d.data._type === "message" && d.data.provider_name) return PROVIDER_BORDER;
+      return "none";
+    })
+    .attr("stroke-width", d => {
+      if (d.data.dynamic_ref) return 2;
+      if (d.data._type === "message" && d.data.provider_name) return 2;
+      return 0;
+    })
+    .attr("stroke-dasharray", d => d.data.dynamic_ref ? "3,2" : "none");
+
+  // -- Labels (only for message-level nodes) --
+  node.filter(d => d.data._type === "message")
+    .append("text")
+    .attr("font-size", "7px")
+    .attr("fill", "#96999E")
+    .attr("dy", "0.31em")
+    .attr("x", d => d.x < Math.PI ? 10 : -10)
+    .attr("text-anchor", d => d.x < Math.PI ? "start" : "end")
+    .attr("transform", d => d.x >= Math.PI ? "rotate(180)" : null)
+    .text(d => {
+      const idx = d.data.name;
+      const kind = d.data.kind;
+      return `${idx} (${kind})`;
+    });
+
+  // -- Tooltip --
+  const tooltip = d3.select("#tooltip");
+
+  function showTooltip(event, d) {
+    let html = "";
+    if (d.data._type === "root") {
+      html = `<div class="tt-label">Session</div>
+              <div class="tt-value">${messages.length} messages, ${root.descendants().length} total nodes</div>`;
+    } else if (d.data._type === "message") {
+      html = `<div class="tt-label">Message</div>
+              <div class="tt-value">${d.data.name}</div>
+              <div class="tt-label">Kind</div>
+              <div class="tt-value">${d.data.kind}</div>
+              <div class="tt-label">Timestamp</div>
+              <div class="tt-value">${d.data.timestamp || "—"}</div>`;
+      if (d.data.provider_name) {
+        html += `<div class="tt-label">Provider</div>
+                 <div class="tt-value highlight">${d.data.provider_name}</div>`;
+      }
+      html += `<div class="tt-label">Parts</div>
+               <div class="tt-value">${d.data.partCount}</div>`;
+    } else if (d.data._type === "part") {
+      html = `<div class="tt-label">Part Kind</div>
+              <div class="tt-value">${d.data.part_kind}</div>`;
+      if (d.data.tool_name) {
+        html += `<div class="tt-label">Tool</div>
+                 <div class="tt-value">${d.data.tool_name}</div>`;
+      }
+      if (d.data.dynamic_ref) {
+        html += `<div class="tt-label">Dynamic Ref</div>
+                 <div class="tt-value highlight">${d.data.dynamic_ref}</div>`;
+      }
+      if (d.data.timestamp) {
+        html += `<div class="tt-label">Timestamp</div>
+                 <div class="tt-value">${d.data.timestamp}</div>`;
+      }
+      if (d.data.content) {
+        const preview = d.data.content.length > 200
+          ? d.data.content.slice(0, 200) + "..."
+          : d.data.content;
+        html += `<div class="tt-label">Content Preview</div>
+                 <div class="tt-value" style="font-size:11px; opacity:0.85;">${escapeHtml(preview)}</div>`;
+      }
+    }
+
+    tooltip.html(html);
+    tooltip.classed("visible", true);
+    positionTooltip(event);
+  }
+
+  function positionTooltip(event) {
+    const rect = container.getBoundingClientRect();
+    let x = event.clientX - rect.left + 14;
+    let y = event.clientY - rect.top + 14;
+    const ttRect = tooltip.node().getBoundingClientRect();
+    if (x + ttRect.width > rect.width - 10) x = x - ttRect.width - 28;
+    if (y + ttRect.height > rect.height - 10) y = y - ttRect.height - 28;
+    tooltip.style("left", x + "px").style("top", y + "px");
+  }
+
+  function hideTooltip() {
+    tooltip.classed("visible", false);
+  }
+
+  function escapeHtml(str) {
+    return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+  }
+
+  node.on("mouseenter", showTooltip)
+      .on("mousemove", positionTooltip)
+      .on("mouseleave", hideTooltip);
+
+})();
+</script>
+
+</body>
+</html>

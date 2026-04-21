@@ -1,0 +1,12 @@
+
+
+# Forge App
+/forge-app/.logs/
+/forge-app/remote-backend/.env
+
+# Quarto
+/.quarto/
+**/*.quarto_ipynb
+
+# Visual Studio Code settings
+/.vscode/
